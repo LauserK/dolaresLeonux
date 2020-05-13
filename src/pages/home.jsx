@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { API } from "../const";
-export const DB = "00000002";
 
 class Home extends Component {
   constructor() {
@@ -18,7 +18,7 @@ class Home extends Component {
 
   handleSearch = e => {
     e.preventDefault();
-
+    const { DB } = this.props.currentUser;
     this.setState(
       {
         ...this.state,
@@ -28,7 +28,7 @@ class Home extends Component {
         fetch(`${API}article/${this.state.account}/?db=${DB}`)
           .then(res => res.json())
           .then(res => {
-            if (!res.error) {
+            if (res.error === false) {
               if (res.data.length == 0) return alert("Cuenta vacia");
               let totalBs = 0;
               let totalDolares = 0;
@@ -63,6 +63,7 @@ class Home extends Component {
   };
 
   handleProcess = type => {
+    const { DB } = this.props.currentUser;
     this.setState(
       {
         ...this.state,
@@ -79,7 +80,19 @@ class Home extends Component {
         })
           .then(res => res.json())
           .then(res => {
+            console.log(res);
             if (res.error === false) {
+              this.setState(
+                {
+                  articles: [],
+                  totalBs: 0,
+                  totalDolares: 0,
+                  account: "",
+                  isLoading: false
+                },
+                () => alert("Procesado")
+              );
+            } else {
               this.setState(
                 {
                   articles: [],
@@ -104,7 +117,9 @@ class Home extends Component {
 
   handleSubmitWithoutPay = e => {
     e.preventDefault();
-    this.handleProcess("1");
+    if (this.props.currentUser.Administrator) {
+      this.handleProcess("1");
+    }
   };
 
   handleChange = e => {
@@ -178,15 +193,21 @@ class Home extends Component {
             >
               PROCESAR
             </a>
-            <a
-              className="waves-effect waves-light btn col s5 right"
-              onClick={this.handleSubmitWithoutPay}
-              disabled={this.state.buttonsEnable ? false : true}
-            >
-              PROCESAR SIN PAGO
-            </a>
+            {this.props.currentUser.Administrator ? (
+              <a
+                className="waves-effect waves-light btn col s5 right"
+                onClick={this.handleSubmitWithoutPay}
+                disabled={this.state.buttonsEnable ? false : true}
+              >
+                PROCESAR SIN PAGO
+              </a>
+            ) : null}
           </div>
-
+          <div className="row">
+            <Link className="waves-effect waves-light btn col s2" to="/logout/">
+              Salir
+            </Link>
+          </div>
           {this.state.isLoading ? (
             <div className="progress">
               <div className="indeterminate"></div>
