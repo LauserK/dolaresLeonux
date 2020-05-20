@@ -12,28 +12,28 @@ class Home extends Component {
       totalDolares: 0,
       account: "",
       isLoading: false,
-      buttonsEnable: false
+      buttonsEnable: false,
     };
   }
 
-  handleSearch = e => {
+  handleSearch = (e) => {
     e.preventDefault();
     const { DB } = this.props.currentUser;
     this.setState(
       {
         ...this.state,
-        isLoading: true
+        isLoading: true,
       },
       () => {
         fetch(`${API}article/${this.state.account}/?db=${DB}`)
-          .then(res => res.json())
-          .then(res => {
+          .then((res) => res.json())
+          .then((res) => {
             if (res.error === false) {
               if (res.data.length == 0) return alert("Cuenta vacia");
               let totalBs = 0;
               let totalDolares = 0;
 
-              res.data.map(article => {
+              res.data.map((article) => {
                 totalBs = totalBs + article.Price;
                 totalDolares = totalDolares + article.PriceUsd;
               });
@@ -44,13 +44,13 @@ class Home extends Component {
                 totalBs: totalBs,
                 totalDolares: totalDolares,
                 buttonsEnable: true,
-                isLoading: false
+                isLoading: false,
               });
             } else {
               this.setState(
                 {
                   ...this.state,
-                  isLoading: false
+                  isLoading: false,
                 },
                 () => {
                   alert(res.description);
@@ -62,24 +62,24 @@ class Home extends Component {
     );
   };
 
-  handleProcess = type => {
+  handleProcess = (type) => {
     const { DB } = this.props.currentUser;
     this.setState(
       {
         ...this.state,
         buttonsEnable: false,
-        isLoading: true
+        isLoading: true,
       },
       () => {
         fetch(`${API}article/${this.state.account}/${type}/?db=${DB}`, {
           method: "post",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({})
+          body: JSON.stringify({}),
         })
-          .then(res => res.json())
-          .then(res => {
+          .then((res) => res.json())
+          .then((res) => {
             console.log(res);
             if (res.error === false) {
               this.setState(
@@ -88,7 +88,7 @@ class Home extends Component {
                   totalBs: 0,
                   totalDolares: 0,
                   account: "",
-                  isLoading: false
+                  isLoading: false,
                 },
                 () => alert("Procesado")
               );
@@ -99,7 +99,7 @@ class Home extends Component {
                   totalBs: 0,
                   totalDolares: 0,
                   account: "",
-                  isLoading: false
+                  isLoading: false,
                 },
                 () => alert("Procesado")
               );
@@ -109,23 +109,23 @@ class Home extends Component {
     );
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
 
     this.handleProcess("0");
   };
 
-  handleSubmitWithoutPay = e => {
+  handleSubmitWithoutPay = (e) => {
     e.preventDefault();
     if (this.props.currentUser.Administrator) {
       this.handleProcess("1");
     }
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({
       ...this.state,
-      account: e.target.value
+      account: e.target.value,
     });
   };
 
@@ -146,7 +146,7 @@ class Home extends Component {
               <label htmlFor="account">Ingresa la cuenta</label>
             </div>
             <a
-              className="waves-effect waves-light btn col s2"
+              className="waves-effect waves-light orange btn col s2"
               onClick={this.handleSearch}
               href="#"
             >
@@ -164,7 +164,7 @@ class Home extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.articles.map(article => (
+                {this.state.articles.map((article) => (
                   <tr key={article.Name}>
                     <td>{article.Name}</td>
                     <td>{article.Quantity}</td>
@@ -187,7 +187,7 @@ class Home extends Component {
 
           <div className="row">
             <a
-              className="waves-effect waves-light btn col s5"
+              className="waves-effect waves-light orange btn col s5"
               onClick={this.handleSubmit}
               disabled={this.state.buttonsEnable ? false : true}
             >
@@ -195,7 +195,7 @@ class Home extends Component {
             </a>
             {this.props.currentUser.Administrator ? (
               <a
-                className="waves-effect waves-light btn col s5 right"
+                className="waves-effect waves-light orange btn col s5 right"
                 onClick={this.handleSubmitWithoutPay}
                 disabled={this.state.buttonsEnable ? false : true}
               >
@@ -204,9 +204,20 @@ class Home extends Component {
             ) : null}
           </div>
           <div className="row">
-            <Link className="waves-effect waves-light btn col s2" to="/logout/">
+            <Link
+              className="waves-effect waves-light orange btn col s2"
+              to="/logout/"
+            >
               Salir
             </Link>
+            {this.props.currentUser.Administrator ? (
+              <Link
+                className="waves-effect waves-light orange btn col s2"
+                to="/sales/"
+              >
+                Ventas
+              </Link>
+            ) : null}
           </div>
           {this.state.isLoading ? (
             <div className="progress">
@@ -220,7 +231,7 @@ class Home extends Component {
 }
 
 const mapStateToProps = ({ user }) => ({
-  currentUser: user.currentUser
+  currentUser: user.currentUser,
 });
 
 export default connect(mapStateToProps, null)(Home);

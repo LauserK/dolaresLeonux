@@ -5,6 +5,8 @@ import "./App.css";
 
 //Pages
 import Home from "./pages/home";
+import Sales from "./pages/sales";
+import SalesDetail from "./pages/salesdetail";
 import Login from "./pages/login";
 import Signout from "./pages/signout";
 
@@ -29,6 +31,14 @@ class App extends Component {
             this.props.currentUser ? <Home /> : <Redirect to="/login" />
           }
         />
+        <Route exact path="/sales/:IdSale" component={SalesDetail} />
+        <Route
+          exact
+          path="/sales"
+          render={() =>
+            this.props.currentUser ? <Sales /> : <Redirect to="/login" />
+          }
+        />
         <Route
           exact
           path="/login"
@@ -47,11 +57,11 @@ class App extends Component {
 }
 
 const mapStateToProps = ({ user, app }) => ({
-  currentUser: user.currentUser
+  currentUser: user.currentUser,
 });
 
-const mapDispatchToProps = dispatch => ({
-  setCurrentUser: user => dispatch(setCurrentUser(user))
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
