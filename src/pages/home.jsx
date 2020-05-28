@@ -13,6 +13,7 @@ class Home extends Component {
       account: "",
       isLoading: false,
       buttonsEnable: false,
+      tasa: 0,
     };
   }
 
@@ -29,18 +30,20 @@ class Home extends Component {
           .then((res) => res.json())
           .then((res) => {
             if (res.error === false) {
-              if (res.data.length == 0) return alert("Cuenta vacia");
+              if (res.data[0].articles.length == 0)
+                return alert("Cuenta vacia");
               let totalBs = 0;
               let totalDolares = 0;
 
-              res.data.map((article) => {
+              res.data[0].articles.map((article) => {
                 totalBs = totalBs + article.Price;
                 totalDolares = totalDolares + article.PriceUsd;
               });
 
               this.setState({
                 ...this.state,
-                articles: res.data,
+                articles: res.data[0].articles,
+                tasa: res.data[0].tasa,
                 totalBs: totalBs,
                 totalDolares: totalDolares,
                 buttonsEnable: true,
@@ -182,6 +185,9 @@ class Home extends Component {
             </p>
             <p className="right-align">
               <b>Total $: </b> {this.state.totalDolares}
+            </p>
+            <p className="right-align">
+              <b>Tasa de cambio: </b> {this.state.tasa}
             </p>
           </div>
 
